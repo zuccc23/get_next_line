@@ -6,7 +6,7 @@
 /*   By: dahmane <dahmane@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 18:19:09 by dahmane           #+#    #+#             */
-/*   Updated: 2024/11/28 22:09:59 by dahmane          ###   ########.fr       */
+/*   Updated: 2024/11/29 16:57:19 by dahmane          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	o = 0;
 	i = 0;
-	if (!s1)
-	{
-		return (ft_strdup((char *)s2));
-	}
 	s3 = malloc(sizeof(char) * (strlen(s1) + strlen(s2) + 1));
 	if (!s3)
 		return (NULL);
@@ -97,14 +93,24 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (s3);
 }
 
+char	check_n(char *buffer, char *temp, char *res)
+{
+	int	i;
+
+	i = 0;
+	// while (buffer[i] && buffer[i] != '\n')
+	// {
+	// 	res[i] = buffer[i];
+	// 	i++;
+	// }
+	res = ft_strjoin(res, temp);
+}
 char *get_next_line(int fd)
 {
 	char	*res;
 	char	*buffer = NULL;
 	char	*temp;
-	char	*strr;
 	int		nb_read = 0;
-	int		i = 0;
 	
 	buffer = malloc(10 * sizeof(char));
 	// nb_read = read(fd, str, 10);
@@ -124,10 +130,11 @@ char *get_next_line(int fd)
 	nb_read = read(fd, buffer, 10);
 	while (nb_read > 0)
 	{
-		temp = ft_strdup(buffer);
+		temp = buffer;
+		
 		if (!res)
 		{
-			res = ft_strdup(temp);
+			res = temp;
 		}
 		else
 			res = ft_strjoin(res, temp);
