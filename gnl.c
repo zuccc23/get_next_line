@@ -6,7 +6,7 @@
 /*   By: dahmane <dahmane@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 18:19:09 by dahmane           #+#    #+#             */
-/*   Updated: 2024/11/29 16:57:19 by dahmane          ###   ########.fr       */
+/*   Updated: 2024/12/02 19:03:50 by dahmane          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,7 @@ char	*ft_strdup(char *src)
 	return (str);
 }
 
-char	*ft_realloc(char *str, char *new)
-{
-	char	*str2;
-	int	size;
-	
-	size = strlen(str) + strlen(new);
-	str2 = malloc(size * sizeof(char));
-	str2 = str;
-	ft_strcat(str2, new);
-	return (str2);
-}
+
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -93,55 +83,62 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (s3);
 }
 
-char	check_n(char *buffer, char *temp, char *res)
+int	check(char *str, char c)
 {
 	int	i;
-
+	
 	i = 0;
-	// while (buffer[i] && buffer[i] != '\n')
-	// {
-	// 	res[i] = buffer[i];
-	// 	i++;
-	// }
-	res = ft_strjoin(res, temp);
+	while (str[i])
+	{
+		if (str[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
 }
-char *get_next_line(int fd)
+
+char *read_line(char *temp, int fd)
 {
-	char	*res;
 	char	*buffer = NULL;
-	char	*temp;
-	int		nb_read = 0;
+	int		nb_read;
 	
 	buffer = malloc(10 * sizeof(char));
-	// nb_read = read(fd, str, 10);
-	// temp = strdup(str);
-	// nb_read = read(fd, str, 10);
-	// res = malloc (21 * sizeof(char));
-	// res = ft_strcat(temp, str);
-	
-	//strr = ft_strdup(res);
-	// nb_read = read(fd, buffer, 10);
-	// temp = ft_strdup(buffer);
-	// res = temp;
-	// nb_read = read(fd, buffer, 10);
-	// temp = ft_strdup(buffer);
-	// res = ft_strjoin(res, temp);
-	//res = ft_strjoin(strr, temp);
-	nb_read = read(fd, buffer, 10);
-	while (nb_read > 0)
+	nb_read = 1;
+	while (nb_read > 0 && check(buffer, '\n') != 1)
 	{
-		temp = buffer;
-		
-		if (!res)
-		{
-			res = temp;
-		}
-		else
-			res = ft_strjoin(res, temp);
 		nb_read = read(fd, buffer, 10);
 		buffer[nb_read] = '\0';
+		if (!temp)
+			temp = ft_strdup(buffer);
+		else
+			temp = ft_strjoin(temp, buffer);
 	}
-	return (res);
+	return (temp);
+}
+char	*divide_line(char *temp, char *res)
+{
+	
+}
+
+char *get_next_line(int fd)
+{
+	char static	*temp;
+	// char	*buffer = NULL;
+	// int		nb_read;
+	
+	// buffer = malloc(10 * sizeof(char));
+	// nb_read = 1;
+	// while (nb_read > 0 && check(buffer, '\n') != 1)
+	// {
+	// 	nb_read = read(fd, buffer, 10);
+	// 	buffer[nb_read] = '\0';
+	// 	if (!temp)
+	// 		temp = ft_strdup(buffer);
+	// 	else
+	// 		temp = ft_strjoin(temp, buffer);
+	// }
+	temp = read_line(temp, fd);
+	return (temp);
 }
 
 int	main(int argc, char *argv[])
@@ -151,3 +148,4 @@ int	main(int argc, char *argv[])
 	printf("%s\n", str);
 	close(fd);
 }
+  
