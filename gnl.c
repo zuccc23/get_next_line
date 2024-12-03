@@ -6,15 +6,11 @@
 /*   By: dahmane <dahmane@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 18:19:09 by dahmane           #+#    #+#             */
-/*   Updated: 2024/12/03 15:25:09 by dahmane          ###   ########.fr       */
+/*   Updated: 2024/12/03 18:35:44 by dahmane          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h> 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "get_next_line.h"
 
 int	ft_strlen_before_line(char *str)
 {
@@ -109,47 +105,6 @@ int	check(char *str, char c)
 	}
 	return (0);
 }
-char	*ft_strchr(const char *s, int c)
-{
-	unsigned char	u_c;
-	int	i;
-
-	i = 0;
-	u_c = (unsigned char)c;
-	while (s[i])
-	{
-		if (s[i] == u_c)
-			return ((char *)&s[i + 1]);
-		i++;
-	}
-	if (u_c == '\0')
-		return ((char *)&s[i]);
-	return ((char *)s);
-}
-// char	*ft_substr(char const *s, unsigned int start, size_t len)
-// {
-// 	char	*s2;
-// 	size_t	i;
-
-// 	if (!s)
-// 		return (NULL);
-// 	if (start > ft_strlen(s))
-// 		return (ft_strdup(""));
-// 	i = 0;
-// 	if (len > ft_strlen(s) - start)
-// 		len = ft_strlen(s) - start;
-// 	s2 = malloc((len + 1) * sizeof(char));
-// 	if (s2 == NULL)
-// 		return (NULL);
-// 	while (i < len && s[start])
-// 	{
-// 		s2[i] = s[start];
-// 		i++;
-// 		start++;
-// 	}
-// 	s2[i] = '\0';
-// 	return (s2);
-// }
 
 char	*get_after_nline(char *temp)
 {
@@ -185,7 +140,7 @@ char	*get_before_nline(char *temp)
 	str = malloc(ft_strlen_before_line(temp) * sizeof(char));
 	if (!str)
 		return(NULL);
-	while (temp[n + 1] != '\n' && temp[n])
+	while (temp[n - 1] != '\n' && temp[n])
 	{
 		str[i] = temp[n];
 		i++;
@@ -198,47 +153,69 @@ char *read_line(char *temp, int fd)
 {
 	char	*buffer = NULL;
 	int		nb_read;
+	char	*cache;
 	
-	buffer = malloc(10 * sizeof(char));
+	if (!temp)
+		temp = ft_strdup("");
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
 	nb_read = 1;
-	while (nb_read > 0 && check(buffer, '\n') != 1)
+	while (nb_read > 0 && check(temp, '\n') != 1)
 	{
-		nb_read = read(fd, buffer, 10);
+		if (nb_read < 0)
+			return(free(temp), free(buffer), NULL);
+		nb_read = read(fd, buffer, BUFFER_SIZE);
 		buffer[nb_read] = '\0';
-		if (!temp)
-			temp = ft_strdup(buffer);
-		else
-			temp = ft_strjoin(temp, buffer);
+		cache = ft_strjoin(temp, buffer);
+		if (!cache)
+			return(free(temp), free(buffer), NULL); 
+		free(temp);
+		temp = cache;
 	}
+	free(buffer);
+	printf("%s", temp);
 	return (temp);
 }
-char	*divide_line(char *temp)
-{
-	char	*res;
+// char	*divide_line(char *temp)
+// {
+// 	char	*res;
 	
-	
-	temp = get_after_nline(temp);
-	return(temp);
-}
+// 	res = get_before_nline(temp);
+// 	temp = get_after_nline(temp);
+// 	return(res);
+// }
 
 char *get_next_line(int fd)
 {
-	char static	*temp;
+	char static	*temp = NULL;
 	char	*res;
 	
 	temp = read_line(temp, fd);
-	temp = divide_line(temp);
-	return (temp);
+	//res = get_before_nline(temp);
+	//temp = get_after_nline(temp);
+	// printf("%s\n", res);
+	return (res);
 }
 
 int	main(int argc, char *argv[])
 {
 	char s[] = "hello\nwelcome";
 	int fd = open (argv[1], O_RDONLY);
-	char *str = get_next_line(fd);
-	printf("%s\n", str);
+	get_next_line(fd);
+	// char *str = get_next_line(fd);
+	// printf("%s", str);
+	// str = get_next_line(fd);
+	// printf("%s", str);
+	// str = get_next_line(fd);
+	// printf("%s", str);
+	// str = get_next_line(fd);
+	// printf("%s", str);
+	// str = get_next_line(fd);
+	// printf("%s", str);
 	close(fd);
 	// printf("%s\n", ft_strchr(s, 'w'));
-	printf("%s\n", get_before_nline(s));
+	// printf("%s\n", get_before_nline(s));
+	// printf("%s\n", get_after_nline(s));
 }
   
