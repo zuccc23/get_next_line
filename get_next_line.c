@@ -6,7 +6,7 @@
 /*   By: dahmane <dahmane@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 16:35:13 by dahmane           #+#    #+#             */
-/*   Updated: 2024/12/06 18:04:44 by dahmane          ###   ########.fr       */
+/*   Updated: 2024/12/09 21:09:02 by dahmane          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*read_line(char *temp, int fd)
 	int		nb_read;
 	char	*cache;
 
-	buffer = malloc((BUFFER_SIZE) * sizeof(char));
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
 		return (NULL);
 	if (!temp)
@@ -49,11 +49,13 @@ char	*divide_line(char **temp)
 	if (!*temp || !**temp)
 		return (NULL);
 	n = 0;
-	while ((*temp)[n - 1] != '\n' && (*temp)[n] != '\0')
+	while ((*temp)[n] != '\n' && (*temp)[n] != '\0')
+		n++;
+	if ((*temp)[n] == '\n')
 		n++;
 	res = ft_substr(*temp, 0, n);
 	if (!res)
-		return (NULL);
+		return (free(*temp), *temp = NULL, NULL);
 	cache = ft_strdup(*temp + n);
 	if (!cache)
 		return (free(res), free(*temp), *temp = NULL, NULL);
@@ -93,10 +95,10 @@ char	*get_next_line(int fd)
 // 	printf("%s", str);
 // 	str = get_next_line(fd);
 // 	printf("%s", str);
-// 	str = get_next_line(fd);
-// 	printf("%s", str);
-// 	str = get_next_line(fd);
-// 	printf("%s", str);
+// 	// str = get_next_line(fd);
+// 	// printf("%s", str);
+// 	// str = get_next_line(fd);
+// 	// printf("%s", str);
 // 	close(fd);
 // 	// printf("%s\n", ft_strchr(s, 'w'));
 // 	// printf("%s\n", get_before_nline(s));
